@@ -4,44 +4,100 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace WindowsFormsApplication3
 {
     public partial class Form1 : Form
     {
+
+        
+        private static System.Timers.Timer timer;
+
         public Form1()
         {
             InitializeComponent();
+            this.KeyPress += new KeyPressEventHandler(onKeyPressed);
         }
 
-       int timerCounter = 0;
-        public int chislo1, chislo2;
-        Timer timer = new Timer();
-        private void button1_Click(object sender, EventArgs e)
-        {
-            chislo1 = 0;
-            chislo2 = 0;
+        delegate void changeTextDelegate(string s);
+        delegate string getTextDelegate();
 
-            int v = Convert.ToInt32(textBox3.Text);
-            textBox4.Text = "n";
-            Timer timer = new Timer();
-            //InitializeComponent();
-            timer.Interval = 1000 ; //интервал между срабатываниями секунд
-            timer.Tick += new EventHandler(timer_Tick); //подписываемся на события Tick
-            timer.Start();
-            //textBox4.Text = "15";
+        private void changeText(string s)
+        {
+            textViewTextBox.Invoke(new changeTextDelegate(str => textViewTextBox.Text = str), s);
         }
 
-        void timer_Tick(object sender, EventArgs e)
+        private string getText()
         {
-            int v = Convert.ToInt32(textBox3.Text);
-            ++timerCounter;
-            if (timerCounter == v)
+            return Convert.ToString(textViewTextBox.Invoke(new getTextDelegate(() => textViewTextBox.Text)));
+        }
+
+
+        delegate void incrementMistakesCountDelegate();
+
+        private void incrementMistakesCount() 
+        {
+            mistakesCountLabel.Invoke(new incrementMistakesCountDelegate(
+                () => {
+                    int mistakesCount = Convert.ToInt32(mistakesCountLabel.Text);
+                    mistakesCount++;
+                    mistakesCountLabel.Text = Convert.ToString(mistakesCount);
+                }               
+                ));
+        }
+
+
+
+        private void startButton_Click(object sender, EventArgs e)
+        {
+            setTimerUp();
+        }
+
+        private void setTimerUp()
+        {
+            int time = 0;
+            try
             {
-                timer.Stop();
-                label4.Text = "5";
-                label5.Text = "4";
+                time = Convert.ToInt32(timeTextBox.Text) * 1000;
+            }
+            catch (Exception)
+            {
+            }
+
+            if(time <= 0)
+            {
+                timeTextBox.Text = Convert.ToString(10);
+                time = 10 * 1000;
+                // 10 seconds by default
+            }
+
+            timer = new System.Timers.Timer(time);
+            timer.Elapsed += timerEvent;
+            timer.Enabled = true;
+        }
+
+        private void timerEvent(Object source, ElapsedEventArgs e)
+        {
+            changeText("qqq");
+        }
+
+        private void textViewTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void onKeyPressed(object sender, KeyPressEventArgs e)
+        {
+            if (!getText().StartsWith("" + e.KeyChar))
+            {
+                incrementMistakesCount();
+            }else
+            {
+                string textBoxText = getText();
+                textBoxText = textBoxText.Substring(1);
+                changeText(textBoxText);
             }
         }
     }
