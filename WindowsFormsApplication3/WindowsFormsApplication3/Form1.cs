@@ -12,7 +12,7 @@ namespace WindowsFormsApplication3
     public partial class Form1 : Form
     {
 
-        
+        private static bool started = false;
         private static System.Timers.Timer timer;
 
         public Form1()
@@ -28,7 +28,6 @@ namespace WindowsFormsApplication3
         {
             textViewTextBox.Invoke(new changeTextDelegate(str => textViewTextBox.Text = str), s);
         }
-
         private string getText()
         {
             return Convert.ToString(textViewTextBox.Invoke(new getTextDelegate(() => textViewTextBox.Text)));
@@ -52,6 +51,7 @@ namespace WindowsFormsApplication3
 
         private void startButton_Click(object sender, EventArgs e)
         {
+            started = true;
             setTimerUp();
         }
 
@@ -80,7 +80,8 @@ namespace WindowsFormsApplication3
 
         private void timerEvent(Object source, ElapsedEventArgs e)
         {
-            changeText("qqq");
+            started = false;
+            //changeText("qqq");
         }
 
         private void textViewTextBox_TextChanged(object sender, EventArgs e)
@@ -90,14 +91,25 @@ namespace WindowsFormsApplication3
 
         private void onKeyPressed(object sender, KeyPressEventArgs e)
         {
+            if (!started)
+            {
+                return;
+            }
+
             if (!getText().StartsWith("" + e.KeyChar))
             {
                 incrementMistakesCount();
-            }else
+            }
+            else
             {
                 string textBoxText = getText();
                 textBoxText = textBoxText.Substring(1);
                 changeText(textBoxText);
+            }
+
+            if (getText().Length == 0)
+            {
+                started = false;
             }
         }
     }
