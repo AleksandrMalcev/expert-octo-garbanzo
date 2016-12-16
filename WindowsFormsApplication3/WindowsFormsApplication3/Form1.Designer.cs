@@ -34,6 +34,9 @@
             this.startButton = new System.Windows.Forms.Button();
             this.textViewTextBox = new System.Windows.Forms.TextBox();
             this.timeTextBox = new System.Windows.Forms.TextBox();
+            this.timeLeftLabel = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.timeLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -95,11 +98,42 @@
             this.timeTextBox.Size = new System.Drawing.Size(100, 20);
             this.timeTextBox.TabIndex = 5;
             // 
+            // timeLeftLabel
+            // 
+            this.timeLeftLabel.AutoSize = true;
+            this.timeLeftLabel.Location = new System.Drawing.Point(302, 165);
+            this.timeLeftLabel.Name = "timeLeftLabel";
+            this.timeLeftLabel.Size = new System.Drawing.Size(77, 13);
+            this.timeLeftLabel.TabIndex = 6;
+            this.timeLeftLabel.Text = "Время вышло";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(21, 189);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(105, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Времени осталось:";
+            // 
+            // timeLabel
+            // 
+            this.timeLabel.AutoSize = true;
+            this.timeLabel.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.timeLabel.Location = new System.Drawing.Point(137, 189);
+            this.timeLabel.Name = "timeLabel";
+            this.timeLabel.Size = new System.Drawing.Size(13, 13);
+            this.timeLabel.TabIndex = 8;
+            this.timeLabel.Text = "0";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(475, 262);
+            this.Controls.Add(this.timeLabel);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.timeLeftLabel);
             this.Controls.Add(this.timeTextBox);
             this.Controls.Add(this.textViewTextBox);
             this.Controls.Add(this.startButton);
@@ -122,5 +156,8 @@
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.TextBox textViewTextBox;
         private System.Windows.Forms.TextBox timeTextBox;
+        private System.Windows.Forms.Label timeLeftLabel;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label timeLabel;
     }
 }

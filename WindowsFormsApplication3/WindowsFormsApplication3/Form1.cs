@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
+using System.IO;
+using System.Threading;
 
 namespace WindowsFormsApplication3
 {
@@ -14,6 +16,7 @@ namespace WindowsFormsApplication3
 
         private static bool started = false;
         private static System.Timers.Timer timer;
+        int timeLeft = 0;
 
         public Form1()
         {
@@ -47,40 +50,64 @@ namespace WindowsFormsApplication3
                 ));
         }
 
+        delegate void setTimeLeftLabelVisibleDelegate(bool visible);
+        private void setTimeLeftLabelVisible(bool visible)
+        {
+            timeLeftLabel.Invoke(new setTimeLeftLabelVisibleDelegate((v) => timeLeftLabel.Visible = v), visible);
+        }
 
+        delegate void setTimeLabelContentDelegate(int content);
+        private void setTimeLabelContent(int content)
+        {
+            timeLabel.Invoke(new setTimeLabelContentDelegate((c) => timeLabel.Text = Convert.ToString(c)), content);
+        }
 
         private void startButton_Click(object sender, EventArgs e)
         {
+            setTimeLeftLabelVisible(false);
+
             started = true;
             setTimerUp();
+            loadText();
         }
 
         private void setTimerUp()
         {
-            int time = 0;
+            timeLeft = 0;
             try
             {
-                time = Convert.ToInt32(timeTextBox.Text) * 1000;
+                timeLeft = Convert.ToInt32(timeTextBox.Text);
             }
             catch (Exception)
             {
             }
 
-            if(time <= 0)
+            if(timeLeft <= 0)
             {
                 timeTextBox.Text = Convert.ToString(10);
-                time = 10 * 1000;
+                timeLeft = 10 * 1000;
                 // 10 seconds by default
             }
 
-            timer = new System.Timers.Timer(time);
+            timer = new System.Timers.Timer();
             timer.Elapsed += timerEvent;
+            timer.AutoReset = true;
+            timer.Interval = 1000;
             timer.Enabled = true;
         }
 
         private void timerEvent(Object source, ElapsedEventArgs e)
         {
-            started = false;
+            timeLeft--;
+            setTimeLabelContent(timeLeft);
+
+            if (timeLeft <= 0)
+            {
+                started = false;
+                setTimeLeftLabelVisible(true);
+                timer.Enabled = false;
+                timer.Stop();
+            }
             //changeText("qqq");
         }
 
@@ -91,6 +118,10 @@ namespace WindowsFormsApplication3
 
         private void onKeyPressed(object sender, KeyPressEventArgs e)
         {
+            if (startButton.Focused)
+            {
+                mistakesCountLabel.Focus();
+            }
             if (!started)
             {
                 return;
@@ -110,6 +141,19 @@ namespace WindowsFormsApplication3
             if (getText().Length == 0)
             {
                 started = false;
+                timer.Stop();
+            }
+        }
+
+        void loadText()
+        {
+            using(StreamReader sr = new StreamReader("resourses/text.txt", Encoding.UTF8))
+            {
+                changeText("Ы");
+                string text = sr.ReadToEnd();
+                
+                text = text.Substring(text.IndexOf(' ', new Random().Next()%600)+1);
+                changeText(text);
             }
         }
     }
